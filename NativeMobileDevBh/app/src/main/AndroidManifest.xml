@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.meetup.nativemobiledevbh" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,6 +21,10 @@
         <activity
             android:name=".FindUserActivity_"
             android:label="@string/title_activity_find_user" >
+        </activity>
+        <activity
+            android:name=".UserActivity_"
+            android:label="@string/title_activity_user" >
         </activity>
     </application>
 
