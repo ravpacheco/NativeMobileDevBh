@@ -1,6 +1,12 @@
 package com.meetup.nativemobiledevbh.client;
 
+import com.meetup.nativemobiledevbh.User;
+
+import org.androidannotations.annotations.rest.Accept;
+import org.androidannotations.annotations.rest.Get;
+import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
+import org.androidannotations.api.rest.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Rest(rootUrl = "https://api.github.com",
@@ -8,9 +14,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
         requestFactory = DefaultRequestFactory.class)
 public interface GitHubClient {
 
-        //@Get("/users/{userName}")
-        //@Accept(MediaType.APPLICATION_JSON)
-        //@RequiresHeader(Constants.SESSION_ID_HEADER)
-        //User getAccount(String userName);
+        @Get("/users/{userName}")
+        @Accept(MediaType.APPLICATION_JSON)
+        //@RequiresHeader()
+        User getAccount(String userName);
 
 }
