@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
@@ -19,13 +20,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 @EActivity(R.layout.activity_user)
@@ -43,6 +52,8 @@ public class UserActivity extends ActionBarActivity {
     @ViewById(R.id.imageGitHub)
     ImageView imageView;
 
+    @ViewById(R.id.imageAvatar)
+    ImageView imageAvatar;
     @Extra
     User findedUser;
 
@@ -66,8 +77,22 @@ public class UserActivity extends ActionBarActivity {
             name.setText(findedUser.getName());
             email.setText(findedUser.getEmail());
             login.setText(findedUser.getLogin());
+
+            URL newurl = null;
+            try {
+                newurl = new URL(findedUser.getAvatarUrl());
+                Bitmap mIcon_val = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
+                imageAvatar.setImageBitmap(mIcon_val);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
         }
     }
+
+
 
     @Click(R.id.openCamera)
     void openCamera(){
