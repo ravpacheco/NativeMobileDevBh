@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.test.UiThreadTest;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.BufferedInputStream;
@@ -78,21 +80,30 @@ public class UserActivity extends ActionBarActivity {
             email.setText(findedUser.getEmail());
             login.setText(findedUser.getLogin());
 
-            URL newurl = null;
-            try {
-                newurl = new URL(findedUser.getAvatarUrl());
-                Bitmap mIcon_val = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-                imageAvatar.setImageBitmap(mIcon_val);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(findedUser.getAvatarUrl() != null){
+                beginGetAvatar();
             }
-            
         }
     }
 
+    @Background
+    void beginGetAvatar(){
+        URL newurl = null;
+        try {
+            newurl = new URL(findedUser.getAvatarUrl());
+            Bitmap mIcon_val = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
+            endGetAvatar(null, mIcon_val);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @UiThread
+    void endGetAvatar(Exception e, Bitmap b){
+        imageAvatar.setImageBitmap(b);
+    }
 
     @Click(R.id.openCamera)
     void openCamera(){
@@ -112,6 +123,17 @@ public class UserActivity extends ActionBarActivity {
                         .getBitmap(cr, selectedImage);
 
                 imageView.setImageBitmap(bitmap);
+
+                if(findedUser.getEmail() != null){
+                    Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    emailIntent.setType("application/image");
+                    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{findedUser.getEmail()});
+                    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Native - Meetup funciona demais");
+                    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Native");
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedImage.toString()));
+                            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                }
+
                 Toast.makeText(this, selectedImage.toString(),
                         Toast.LENGTH_LONG).show();
             } catch (Exception e) {
