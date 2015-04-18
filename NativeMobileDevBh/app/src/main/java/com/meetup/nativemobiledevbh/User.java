@@ -1,5 +1,6 @@
 package com.meetup.nativemobiledevbh;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -42,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "created_at",
         "updated_at"
 })
-public class User {
+public class User implements Serializable{
 
     @JsonProperty("login")
     private String login;
