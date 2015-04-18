@@ -33,7 +33,7 @@ public class FindUserActivity extends ActionBarActivity {
 
     @AfterViews
     void init(){
-
+        setTitle("Search Github user");
     }
 
     @Click(R.id.findButton)
@@ -62,7 +62,7 @@ public class FindUserActivity extends ActionBarActivity {
         }
 
         if(user != null){
-            UserActivity_.intent(this).findedUser(user).start();
+            UserActivity_.intent(this).user(user).start();
         }
     }
 }

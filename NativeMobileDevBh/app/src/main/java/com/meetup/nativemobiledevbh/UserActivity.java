@@ -5,17 +5,11 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.test.UiThreadTest;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,12 +23,8 @@ import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -57,7 +47,7 @@ public class UserActivity extends ActionBarActivity {
     @ViewById(R.id.imageAvatar)
     ImageView imageAvatar;
     @Extra
-    User findedUser;
+    User user;
 
     protected final static int TAKE_PICTURE = 1;
     private Uri imageUri;
@@ -74,13 +64,14 @@ public class UserActivity extends ActionBarActivity {
     @AfterViews
     void init(){
 
-        if(findedUser != null) {
+        if(user != null) {
+            setTitle(user.getName());
 
-            name.setText(findedUser.getName());
-            email.setText(findedUser.getEmail());
-            login.setText(findedUser.getLogin());
+            name.setText(user.getName());
+            email.setText(user.getEmail());
+            login.setText(user.getLogin());
 
-            if(findedUser.getAvatarUrl() != null){
+            if(user.getAvatarUrl() != null){
                 beginGetAvatar();
             }
         }
@@ -90,7 +81,7 @@ public class UserActivity extends ActionBarActivity {
     void beginGetAvatar(){
         URL newurl = null;
         try {
-            newurl = new URL(findedUser.getAvatarUrl());
+            newurl = new URL(user.getAvatarUrl());
             Bitmap mIcon_val = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
             endGetAvatar(null, mIcon_val);
         } catch (MalformedURLException e) {
@@ -110,7 +101,6 @@ public class UserActivity extends ActionBarActivity {
         takePhoto();
     }
 
-
     @OnActivityResult(TAKE_PICTURE)
     void result(int requestCode, int resultCode, Intent data){
         if (resultCode == Activity.RESULT_OK) {
@@ -124,10 +114,10 @@ public class UserActivity extends ActionBarActivity {
 
                 imageView.setImageBitmap(bitmap);
 
-                if(findedUser.getEmail() != null){
+                if(user.getEmail() != null){
                     Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
                     emailIntent.setType("application/image");
-                    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{findedUser.getEmail()});
+                    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{user.getEmail()});
                     emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Native - Meetup funciona demais");
                     emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Native");
                     emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedImage.toString()));
